@@ -14,3 +14,12 @@ clean:
 
 %.o: %.c $(HEADERS)
 	$(CC) -c $< -o $@ $(CFLAGS)
+
+testall: test1 test2 test3 
+	@echo "All tests passed"
+test1: hw10
+	./hw10 testcases/1.txt
+test2: hw10
+	./hw10 Testcases/2.txt	
+test3: hw10
+	./hw10 testcases/3.txt

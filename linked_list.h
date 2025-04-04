@@ -20,6 +20,6 @@ size_t remove_from_tail(struct linked_list *list);
 
 void dump_list(FILE *fp, struct linked_list list);
 
-void free_list(struct linked_list list);
+void free_list(struct linked_list* list);
 
 #endif // LINKED_LIST_H_

@@ -27,15 +27,15 @@ void insert_at_tail(struct linked_list *list, size_t value)
 {
   struct list_node* newVal = new_node(value);
   
-  
-  if (list -> head == NULL) // handles the problem where it is an empty list
+  // handles the problem where it is an empty list
+  if (list -> head == NULL) 
   {
     list -> head = newVal;
     return;
   }
 
   struct list_node* addressToCheck = list -> head;
-  while(addressToCheck -> next!= NULL)
+  while(addressToCheck -> next != NULL)
   {
     addressToCheck = addressToCheck -> next;
   }
@@ -50,12 +50,12 @@ size_t remove_from_head(struct linked_list *list)
   {
     return 0;
   }
-  size_t headVal = (list -> head) -> value; // head value
-  struct list_node* temp = list -> head; // temp variable for list head
-  list -> head = (list -> head) -> next; // change new head
-  
-  free(temp);
-  return headVal; 
+
+  struct list_node* temp = (list -> head) -> next; // temp variable for list head
+  free(list -> head);
+  list -> head = temp;
+
+  return (list -> head) -> value; 
 }
 
 size_t remove_from_tail(struct linked_list *list) 
@@ -89,27 +89,12 @@ size_t remove_from_tail(struct linked_list *list)
 
 void free_list(struct linked_list list) 
 {
-  if (list.head == NULL) // if empty list
+  while (list.head != NULL)
   {
-    return;
+    struct list_node* tempPtr = list.head ->next;
+    free (list.head);
+    list.head = tempPtr;
   }
-  if (list.head -> next == NULL) // if one element list
-  {
-    free(list.head);
-    return;
-  }
-
-  struct list_node* temp = list.head;
-  struct list_node* temp2 = NULL;
-
-  do
-  {
-    temp2 = temp -> next;
-    free(temp);
-    temp = temp2;
-  }while(temp -> next != NULL);
-  
-  return;
 }
 
 // Utility function to help you debugging, do not modify

@@ -87,14 +87,19 @@ size_t remove_from_tail(struct linked_list *list)
 }
 
 
-void free_list(struct linked_list* list) 
+void free_list(struct linked_list list) 
 {
-  if (list -> head == NULL) // if empty list
+  if (list.head == NULL) // if empty list
   {
     return;
   }
+  if (list.head -> next == NULL) // if one element list
+  {
+    free(list.head);
+    return;
+  }
 
-  struct list_node* temp = list -> head;
+  struct list_node* temp = list.head;
   struct list_node* temp2 = NULL;
 
   do

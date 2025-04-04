@@ -37,6 +37,7 @@ void insert_at_tail(struct linked_list *list, size_t value)
   struct list_node* addressToCheck = list -> head;
   while(addressToCheck -> next != NULL)
   {
+    printf("Current node: %p, Next node: %p\n", (void*)addressToCheck, (void*)addressToCheck->next);
     addressToCheck = addressToCheck -> next;
   }
 

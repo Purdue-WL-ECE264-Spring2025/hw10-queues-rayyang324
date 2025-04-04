@@ -44,10 +44,27 @@ int number_of_moves(struct game_state start)
     {
       return currentState.num_steps;
     }
+    else
+    {
+      struct game_state nextState = currentState;
+      move_up(&nextState);
+      enqueue(&q, nextState);
+      nextState = currentState;
+      move_down(&nextState);
+      enqueue(&q, nextState);
+      nextState = currentState;
+      move_left(&nextState);
+      enqueue(&q, nextState);
+      nextState = currentState;
+      move_right(&nextState);
+      enqueue(&q, nextState);
+      nextState = currentState;
+    }
   }
 
   return 0; 
 }
+
 bool completedGame(struct game_state state)
 {
   int correctness = 0; // check if the state of the game is at the end or not

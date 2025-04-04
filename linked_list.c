@@ -37,11 +37,11 @@ void insert_at_tail(struct linked_list *list, size_t value)
   struct list_node* addressToCheck = list -> head;
   while(addressToCheck -> next != NULL)
   {
-    printf("Current node: %p, Next node: %p\n", (void*)addressToCheck, (void*)addressToCheck->next);
     addressToCheck = addressToCheck -> next;
   }
 
-  addressToCheck -> next = newVal; // adding in the new value at the end
+  (*addressToCheck).next = newVal; // adding in the new value at the end
+  
   return;
 }
 
@@ -52,11 +52,12 @@ size_t remove_from_head(struct linked_list *list)
     return 0;
   }
 
-  struct list_node* temp = (list -> head) -> next; // temp variable for list head
-  free(list -> head);
-  list -> head = temp;
-
-  return (list -> head) -> value; 
+  struct list_node* temp = list -> head; // temp variable for memory deletion
+  size_t tempVal = temp -> value; // value of the temp variable
+  struct list_node* temp2 = list -> head -> next; // temp variable for list head
+  free (temp);
+  list -> head = temp2;
+  return tempVal; 
 }
 
 size_t remove_from_tail(struct linked_list *list) 

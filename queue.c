@@ -16,25 +16,7 @@ struct game_state dequeue(struct queue *q)
   struct game_state removedGameState = deserialize((remove_from_head(&q->data)));
   return removedGameState;
 }
-/*
-node bfs(graph g, node start, node search) {
-  queue q = new_queue();
-  while (!empty(stack)) {
-      node cur = dequeue(&q);
-      if (equals(cur, search))
-      {
-        return cur;
-      }
-      else
-      {
-        for (node child in children(cur))
-        {
-            enqueue(&q, child);
-        }
-      }
-  }
-}
-*/
+
 int number_of_moves(struct game_state start)
 {
   struct game_state completed =
@@ -44,6 +26,7 @@ int number_of_moves(struct game_state start)
           .empty_col = 3,
           .num_steps = 0};
   struct queue *q = malloc(sizeof(struct queue));
+  uint64_t serializedCompleted = serialize(completed);
 
   if (q == NULL)
   {
@@ -55,8 +38,8 @@ int number_of_moves(struct game_state start)
   while ((q->data).head != NULL)
   {
     struct game_state currentState = dequeue(q);
-    uint64_t serializedCompleted = serialize(completed);
     uint64_t serializedCurrent = serialize(currentState);
+    struct game_state nextState = currentState;
     if (serializedCompleted == serializedCurrent - currentState.num_steps)
     {
       return currentState.num_steps;
@@ -68,7 +51,7 @@ int number_of_moves(struct game_state start)
 
       while (nodeTraversal != NULL && nodeTraversal->next != NULL)
       {
-        if (nodeTraversal -> value - serializedCurrent < 64) 
+        if (nodeTraversal -> value == serializedCurrent) 
           {
             isRepeated = 1;
             break;
@@ -77,7 +60,6 @@ int number_of_moves(struct game_state start)
       }
       if (isRepeated == 0)
       {
-        struct game_state nextState = currentState;
         if (nextState.empty_row != 3)
         {
           move_up(&nextState);

@@ -1,7 +1,9 @@
 #include "queue.h"
 #include "tile_game.h"
 #include <stdlib.h>
-bool completedGame(struct game_state);
+#include <math.h>
+
+//bool completedGame(struct game_state);
 
 void enqueue(struct queue *q, struct game_state state)
 {
@@ -36,6 +38,12 @@ node bfs(graph g, node start, node search) {
 */
 int number_of_moves(struct game_state start)
 {
+  struct game_state completed =
+      {
+          .tiles = {{1, 2, 3, 4}, {5, 6, 7, 8}, {9, 10, 11, 12}, {13, 14, 15, 0}},
+          .empty_row = 3,
+          .empty_col = 3,
+          .num_steps = 0};
   struct queue *q = malloc(sizeof(struct queue));
 
   if (q == NULL)
@@ -48,56 +56,73 @@ int number_of_moves(struct game_state start)
   while ((q->data).head != NULL)
   {
     struct game_state currentState = dequeue(q);
-
-    if (completedGame(currentState))
+    uint64_t serializedCompleted = serialize(completed);
+    uint64_t serializedCurrent = serialize(currentState);
+    if (serializedCompleted == serializedCurrent - currentState.num_steps)
     {
       return currentState.num_steps;
     }
     else
     {
-      struct game_state nextState = currentState;
-      if (nextState.empty_row != 3)
+      struct list_node* nodeTraversal = (q->data).head;
+      int isRepeated = 0;
+
+      while (nodeTraversal != NULL && nodeTraversal->next != NULL)
       {
-        move_up(&nextState);
-        enqueue(q, nextState);
-        nextState = currentState;
+        if (abs(nodeTraversal -> value - serializedCurrent) < 64) 
+          {
+            isRepeated = 1;
+            break;
+          }
+        nodeTraversal = nodeTraversal -> next;
       }
-      if (nextState.empty_row != 0)
+      if (isRepeated == 0)
       {
-        move_down(&nextState);
-        enqueue(q, nextState);
-        nextState = currentState;
-      }
-      if (nextState.empty_col != 3)
-      {
-        move_left(&nextState);
-        enqueue(q, nextState);
-        nextState = currentState;
-      }
-      if (nextState.empty_col != 0)
-      {
-        move_down(&nextState);
-        enqueue(q, nextState);
-        nextState = currentState;
+        struct game_state nextState = currentState;
+        if (nextState.empty_row != 3)
+        {
+          move_up(&nextState);
+          enqueue(q, nextState);
+          nextState = currentState;
+        }
+        if (nextState.empty_row != 0)
+        {
+          move_down(&nextState);
+          enqueue(q, nextState);
+          nextState = currentState;
+        }
+        if (nextState.empty_col != 3)
+        {
+          move_left(&nextState);
+          enqueue(q, nextState);
+          nextState = currentState;
+        }
+        if (nextState.empty_col != 0)
+        {
+          move_down(&nextState);
+          enqueue(q, nextState);
+          nextState = currentState;
+        }
       }
     }
-  }
 
+  }
   return 0;
 }
 
-bool completedGame(struct game_state state)
-{
-  int correctness = 0; // check if the state of the game is at the end or not
-  for (int i = 0; i < 4; i++)
+/*
+  bool completedGame(struct game_state state)
   {
-    for (int j = 0; j < 4; j++)
+    int correctness = 0; // check if the state of the game is at the end or not
+    for (int i = 0; i < 4; i++)
     {
-      if (state.tiles[i][j] == 4 * i + j + 1|| (state.tiles[state.empty_row][state.empty_col] == 0 && state.empty_row == i && state.empty_col == j))
+      for (int j = 0; j < 4; j++)
       {
-        correctness++;
+        if (state.tiles[i][j] == 4 * i + j + 1 || (state.tiles[state.empty_row][state.empty_col] == 0 && state.empty_row == i && state.empty_col == j))
+        {
+          correctness++;
+        }
       }
     }
-  }
-  return ((correctness == 16) ? true : false);
-}
+    return ((correctness == 16) ? true : false);
+  }*/

@@ -19,7 +19,22 @@ testall: test1 test2 test3
 	@echo "All tests passed"
 test1: hw10
 	./hw10 testcases/1.txt
+	@echo "test1 passed"
 test2: hw10
-	./hw10 Testcases/2.txt	
+	./hw10 testcases/2.txt
+	@echo "test2 passed"
 test3: hw10
 	./hw10 testcases/3.txt
+	@echo "test3 passed"
+
+timeAmt1: $(APP)
+	@echo "test1: "
+	time ./hw10 testcases/1.txt 
+	
+timeAmt2: $(APP)
+	@echo "test2: "
+	time ./hw10 testcases/2.txt 
+	
+timeAmt3: $(APP)
+	@echo "test3: "
+	time ./hw10 testcases/3.txt 

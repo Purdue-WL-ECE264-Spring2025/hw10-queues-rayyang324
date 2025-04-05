@@ -32,11 +32,11 @@ int number_of_moves(struct game_state start)
 
   enqueue(q, start);
   enqueue(qToCheck, start);
-
+  int numStepNow = 0;
   while ((q->data).head != NULL)
   {
     struct game_state currentState = dequeue(q);
-    int numStepNow = currentState.num_steps;
+    numStepNow = currentState.num_steps;
     currentState.num_steps = 0;
     uint64_t serializedCurrent = serialize(currentState);
     currentState.num_steps = numStepNow;
@@ -65,35 +65,34 @@ int number_of_moves(struct game_state start)
       {
         if (nextState.empty_row != 3)
         {
+          nextState = currentState;
           move_up(&nextState);
           enqueue(q, nextState);
-          nextState = currentState;
         }
         if (nextState.empty_row != 0)
         {
+          nextState = currentState;
           move_down(&nextState);
           enqueue(q, nextState);
-          nextState = currentState;
         }
         if (nextState.empty_col != 3)
         {
+          nextState = currentState;
           move_left(&nextState);
           enqueue(q, nextState);
-          nextState = currentState;
         }
         if (nextState.empty_col != 0)
         {
+          nextState = currentState;
           move_down(&nextState);
           enqueue(q, nextState);
-          nextState = currentState;
         }
         currentState.num_steps = 0;
         enqueue(qToCheck, currentState);
       }
     }
-
   }
-  return 0;
+  return numStepNow + 1;
 }
 
 

@@ -1,7 +1,6 @@
 #include "queue.h"
 #include "tile_game.h"
 #include <stdlib.h>
-#include <math.h>
 
 //bool completedGame(struct game_state);
 
@@ -69,7 +68,7 @@ int number_of_moves(struct game_state start)
 
       while (nodeTraversal != NULL && nodeTraversal->next != NULL)
       {
-        if (abs(nodeTraversal -> value - serializedCurrent) < 64) 
+        if (nodeTraversal -> value - serializedCurrent < 64) 
           {
             isRepeated = 1;
             break;

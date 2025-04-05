@@ -2,7 +2,7 @@
 #include "tile_game.h"
 #include <stdlib.h>
 
-//bool completedGame(struct game_state);
+bool completedGame(struct game_state);
 
 void enqueue(struct queue *q, struct game_state state)
 {
@@ -19,14 +19,7 @@ struct game_state dequeue(struct queue *q)
 
 int number_of_moves(struct game_state start)
 {
-  struct game_state completed =
-      {
-          .tiles = {{1, 2, 3, 4}, {5, 6, 7, 8}, {9, 10, 11, 12}, {13, 14, 15, 0}},
-          .empty_row = 3,
-          .empty_col = 3,
-          .num_steps = 0};
   struct queue *q = malloc(sizeof(struct queue));
-  uint64_t serializedCompleted = serialize(completed);
 
   if (q == NULL)
   {
@@ -39,17 +32,17 @@ int number_of_moves(struct game_state start)
   {
     struct game_state currentState = dequeue(q);
     uint64_t serializedCurrent = serialize(currentState);
-    struct game_state nextState = currentState;
-    if (serializedCompleted == serializedCurrent - currentState.num_steps)
+    if (completedGame(currentState))
     {
       return currentState.num_steps;
     }
     else
     {
+      struct game_state nextState = currentState;
       struct list_node* nodeTraversal = (q->data).head;
       int isRepeated = 0;
 
-      while (nodeTraversal != NULL && nodeTraversal->next != NULL)
+      while (nodeTraversal != NULL)
       {
         if (nodeTraversal -> value == serializedCurrent) 
           {
@@ -91,7 +84,7 @@ int number_of_moves(struct game_state start)
   return 0;
 }
 
-/*
+
   bool completedGame(struct game_state state)
   {
     int correctness = 0; // check if the state of the game is at the end or not
@@ -106,4 +99,4 @@ int number_of_moves(struct game_state start)
       }
     }
     return ((correctness == 16) ? true : false);
-  }*/
+  }

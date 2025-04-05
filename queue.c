@@ -20,37 +20,47 @@ struct game_state dequeue(struct queue *q)
 int number_of_moves(struct game_state start)
 {
   struct queue *q = malloc(sizeof(struct queue));
+  struct queue *qToCheck = malloc(sizeof(struct queue));
 
-  if (q == NULL)
+  if (q == NULL || qToCheck == NULL)
   {
     return -1;
   }
+
   (q->data).head = NULL;
+  (qToCheck->data).head = NULL;
 
   enqueue(q, start);
+  enqueue(qToCheck, start);
+
   while ((q->data).head != NULL)
   {
     struct game_state currentState = dequeue(q);
+    int numStepNow = currentState.num_steps;
+    currentState.num_steps = 0;
     uint64_t serializedCurrent = serialize(currentState);
+    currentState.num_steps = numStepNow;
     if (completedGame(currentState))
     {
-      return currentState.num_steps;
+      return numStepNow;
     }
     else
     {
       struct game_state nextState = currentState;
-      struct list_node* nodeTraversal = (q->data).head;
       int isRepeated = 0;
-
-      while (nodeTraversal != NULL)
+      
+      struct list_node* qChecker = qToCheck->data.head;
+      while (qChecker->next != NULL)
       {
-        if (nodeTraversal -> value == serializedCurrent) 
-          {
-            isRepeated = 1;
-            break;
-          }
-        nodeTraversal = nodeTraversal -> next;
+        qChecker = qChecker->next;
+        if (qChecker->value == serializedCurrent) 
+        {
+          isRepeated = 1;
+          break;
+        }
+        
       }
+
       if (isRepeated == 0)
       {
         if (nextState.empty_row != 3)
@@ -77,6 +87,8 @@ int number_of_moves(struct game_state start)
           enqueue(q, nextState);
           nextState = currentState;
         }
+        currentState.num_steps = 0;
+        enqueue(qToCheck, currentState);
       }
     }
 

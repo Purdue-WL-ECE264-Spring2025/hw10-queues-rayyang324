@@ -5,13 +5,11 @@
 struct list_node *new_node(size_t value) 
 {
   struct list_node* newNodePtr = malloc(sizeof(struct list_node));
-  if (newNodePtr == NULL)
+  if(newNodePtr)
   {
-    return NULL;
+    newNodePtr -> value = value;
+    newNodePtr -> next = NULL;
   }
-  newNodePtr -> value = value;
-  newNodePtr -> next = NULL;
-
   return newNodePtr; 
 }
 
@@ -26,7 +24,7 @@ void insert_at_head(struct linked_list *list, size_t value)
 void insert_at_tail(struct linked_list *list, size_t value) 
 {
   struct list_node* newVal = new_node(value);
-  
+  if (!newVal){return;} 
   // handles the problem where it is an empty list
   if (list -> head == NULL) 
   {
@@ -34,15 +32,16 @@ void insert_at_tail(struct linked_list *list, size_t value)
     return;
   }
 
-  struct list_node* addressToCheck = list -> head;
-  while(addressToCheck -> next != NULL)
+  struct list_node *addressToCheck = list->head;
+
+  // Traverse the list until we reach the last node
+  while (addressToCheck -> next != NULL) 
   {
-    addressToCheck = addressToCheck -> next;
+    addressToCheck = addressToCheck->next;
   }
 
-  (*addressToCheck).next = newVal; // adding in the new value at the end
-  
-  return;
+  // Now addressToCheck points to the last node, so append the new node
+  addressToCheck->next = newVal;
 }
 
 size_t remove_from_head(struct linked_list *list)  
@@ -54,9 +53,8 @@ size_t remove_from_head(struct linked_list *list)
 
   struct list_node* temp = list -> head; // temp variable for memory deletion
   size_t tempVal = temp -> value; // value of the temp variable
-  struct list_node* temp2 = list -> head -> next; // temp variable for list head
+  list -> head = list -> head -> next;
   free (temp);
-  list -> head = temp2;
   return tempVal; 
 }
 

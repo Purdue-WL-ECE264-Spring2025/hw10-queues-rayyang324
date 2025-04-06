@@ -42,6 +42,8 @@ int number_of_moves(struct game_state start)
     currentState.num_steps = numStepNow;
     if (completedGame(currentState))
     {
+      free_list(q->data);
+      free_list(qToCheck->data);
       return numStepNow;
     }
     else
@@ -65,34 +67,36 @@ int number_of_moves(struct game_state start)
       {
         if (nextState.empty_row != 3)
         {
-          nextState = currentState;
           move_up(&nextState);
           enqueue(q, nextState);
+          nextState = currentState;
         }
         if (nextState.empty_row != 0)
         {
-          nextState = currentState;
           move_down(&nextState);
           enqueue(q, nextState);
+          nextState = currentState;
         }
         if (nextState.empty_col != 3)
         {
-          nextState = currentState;
           move_left(&nextState);
           enqueue(q, nextState);
+          nextState = currentState;
         }
         if (nextState.empty_col != 0)
         {
-          nextState = currentState;
           move_down(&nextState);
           enqueue(q, nextState);
+          nextState = currentState;
         }
         currentState.num_steps = 0;
         enqueue(qToCheck, currentState);
       }
     }
   }
-  return numStepNow + 1;
+    free_list(q->data);
+    free_list(qToCheck->data);
+  return numStepNow;
 }
 
 

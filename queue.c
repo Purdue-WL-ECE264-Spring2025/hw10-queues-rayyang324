@@ -44,6 +44,8 @@ int number_of_moves(struct game_state start)
     {
       free_list(q->data);
       free_list(qToCheck->data);
+      free(q);
+      free(qToCheck);
       return numStepNow;
     }
     else
@@ -96,6 +98,8 @@ int number_of_moves(struct game_state start)
   }
     free_list(q->data);
     free_list(qToCheck->data);
+    free(q);
+    free(qToCheck);
   return numStepNow;
 }
 

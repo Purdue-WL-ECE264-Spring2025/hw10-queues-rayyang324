@@ -19,8 +19,14 @@ struct game_state dequeue(struct queue *q)
 
 int number_of_moves(struct game_state start)
 {
+  // have a q of possible movements and a qToCheck for checking duplication
   struct queue *q = malloc(sizeof(struct queue));
   struct queue *qToCheck = malloc(sizeof(struct queue));
+
+  // finding completed state serial number
+  struct game_state completedState = {.tiles = {{1, 2, 3, 4}, {5, 6, 7, 8}, {9, 10, 11, 12}, {13, 14, 15, 0}},
+    .empty_row = 3, .empty_col = 3, .num_steps = 0};
+  uint64_t serializedComplete = serialize(completedState);
 
   if (q == NULL || qToCheck == NULL)
   {
@@ -29,10 +35,13 @@ int number_of_moves(struct game_state start)
 
   (q->data).head = NULL;
   (qToCheck->data).head = NULL;
-
+  // queue the start
   enqueue(q, start);
   enqueue(qToCheck, start);
-  int numStepNow = 0;
+
+  // steps made
+  int numStepNow;
+
   while ((q->data).head != NULL)
   {
     struct game_state currentState = dequeue(q);
@@ -40,7 +49,7 @@ int number_of_moves(struct game_state start)
     currentState.num_steps = 0;
     uint64_t serializedCurrent = serialize(currentState);
     currentState.num_steps = numStepNow;
-    if (completedGame(currentState))
+    if (serializedCurrent == serializedComplete)
     {
       free_list(q->data);
       free_list(qToCheck->data);
@@ -56,43 +65,42 @@ int number_of_moves(struct game_state start)
       struct list_node* qChecker = qToCheck->data.head;
       while (qChecker->next != NULL)
       {
-        qChecker = qChecker->next;
         if (qChecker->value == serializedCurrent) 
         {
           isRepeated = 1;
           break;
         }
-        
+        qChecker = qChecker->next;
       }
-
       if (isRepeated == 0)
       {
-        if (nextState.empty_row != 3)
+        if (currentState.empty_row != 3)
         {
+          nextState = currentState;
           move_up(&nextState);
           enqueue(q, nextState);
-          nextState = currentState;
         }
-        if (nextState.empty_row != 0)
+        if (currentState.empty_row != 0)
         {
+          nextState = currentState;
           move_down(&nextState);
           enqueue(q, nextState);
-          nextState = currentState;
         }
-        if (nextState.empty_col != 3)
+        if (currentState.empty_col != 3)
         {
+          nextState = currentState;
           move_left(&nextState);
           enqueue(q, nextState);
-          nextState = currentState;
         }
-        if (nextState.empty_col != 0)
+        if (currentState.empty_col != 0)
         {
-          move_down(&nextState);
-          enqueue(q, nextState);
           nextState = currentState;
+          move_right(&nextState);
+          enqueue(q, nextState);
         }
         currentState.num_steps = 0;
         enqueue(qToCheck, currentState);
+
       }
     }
   }
@@ -100,7 +108,7 @@ int number_of_moves(struct game_state start)
     free_list(qToCheck->data);
     free(q);
     free(qToCheck);
-  return numStepNow;
+  return 0;
 }
 
 
